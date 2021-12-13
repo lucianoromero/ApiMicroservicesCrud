@@ -25,7 +25,7 @@ public class PessoaDTO {
 	}
 
 	public PessoaModel atualizar(Long id, PessoaRepository pessoaRepository) {
-		PessoaModel model = pessoaRepository.getById(id);
+		PessoaModel model = pessoaRepository.getOne(id);
 		model.setNome(nome);
 		return model;
 	}
