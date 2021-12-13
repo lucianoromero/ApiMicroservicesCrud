@@ -21,6 +21,10 @@ import com.br.microservice.dto.PessoaDTO;
 import com.br.microservice.model.PessoaModel;
 import com.br.microservice.repository.PessoaRepository;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @RestController
 @RequestMapping("/pessoas")
 public class PessoasController {
@@ -28,11 +32,13 @@ public class PessoasController {
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
+	@ApiOperation(value = "Retorna uma lista de pessoas")
 	@GetMapping
 	public List<PessoaModel> listar() {
 		return pessoaRepository.findAll();
 	}
 
+	@ApiOperation(value = "Cadastro de Pessoa")
 	@PostMapping
 	@Transactional
 	public ResponseEntity<PessoaModel> cadastrar(@RequestBody PessoaDTO pessoaDTO, UriComponentsBuilder uriBuilder) {
@@ -42,6 +48,9 @@ public class PessoasController {
 		return ResponseEntity.created(uri).body(pessoaModelCadastro);
 	}
 
+	
+	
+	@ApiOperation(value = "Busca detalhada de Pessoa, pelo ID")
 	@GetMapping("/{id}")
 	public ResponseEntity<PessoaModel> detalhar(@PathVariable Long id) {
 		Optional<PessoaModel> pessoaModel = pessoaRepository.findById(id);
@@ -52,6 +61,9 @@ public class PessoasController {
 
 	}
 
+
+
+	@ApiOperation(value = "Atualização de Pessoa")
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<PessoaModel> atualizar(@PathVariable Long id, @RequestBody PessoaDTO pessoaDTO) {
@@ -63,6 +75,14 @@ public class PessoasController {
 		return ResponseEntity.notFound().build();
 	}
 
+	
+	
+	@ApiOperation(value = "Remove uma Pessoa")
+	@ApiResponses(value = {
+	    @ApiResponse(code = 200, message = "Pessoa Removida"),
+	    @ApiResponse(code = 400, message = "Bad Request, Verificar o paramentro"),
+	    @ApiResponse(code = 500, message = "Foi gerada uma exceção"),
+	})	
 	@DeleteMapping("/{id}")
 	@Transactional
 	public ResponseEntity<PessoaModel> remover(@PathVariable Long id) {
