@@ -1,33 +1,36 @@
 version: '3'
+
 services:
-  mysql:
-    image: mysql/mysql-server
-    container_name: DBbancoCompose
+  mysqlsrv:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: "microservicescrud"
     ports:
-      - "33060:33060"
+      - "3306:3306"
     networks:
-      redeteste-network:
-       ipv4_address: 10.5.0.5
+       mysql-compose-network:
+         ipv4_address: 10.5.0.5
   
-  apimicroservicescrud:
+  apimicroservices:
         build:
             dockerfile: ./Dockerfile
             context: .
         image: lucianoromero/apimicroservicescrud
-        container_name: apimicroservicescrud
         environment:
-            DB_URL: 'mysql://10.5.0.5:3306/microservicescrud?createDatabaseIfNotExist=true&serverTimezone=UTC'
-            DB_USER: 'root'
-            DB_SENHA: '123456'
+               - DB_URL=jdbc:mysql://10.5.0.5:3306/microservicescrud?createDatabaseIfNotExist=true&serverTimezone=UTC
+               - DB_USER=root
+               - DB_SENHA=123456
         ports:
             - "8080:8080"  
         networks: 
-            - redeteste-network
+             mysql-compose-network:
+              ipv4_address: 10.5.0.7
         depends_on:
-            - "mysql"
+            - "mysqlsrv"
 
-networks:
-  redeteste-network:
+networks: 
+  mysql-compose-network:
     driver: bridge
     ipam:
      config:
